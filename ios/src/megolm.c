@@ -14,13 +14,13 @@
  */
 
 
-#include "olmKit/megolm.h"
+#include "olm/megolm.h"
 
 #include <string.h>
 
-#include "olmKit/cipher.h"
-#include "olmKit/crypto.h"
-#include "olmKit/pickle.h"
+#include "olm/cipher.h"
+#include "olm/crypto.h"
+#include "olm/pickle.h"
 
 static const struct _olm_cipher_aes_sha_256 MEGOLM_CIPHER =
     OLM_CIPHER_INIT_AES_SHA_256("MEGOLM_KEYS");

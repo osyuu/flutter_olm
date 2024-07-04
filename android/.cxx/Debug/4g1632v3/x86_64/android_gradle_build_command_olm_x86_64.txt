@@ -1,7 +1,0 @@
-Executable : /Users/phil/Library/Android/sdk/cmake/3.18.1/bin/ninja
-arguments : 
--C
-/Users/phil/shaberi/flutter_olm/android/.cxx/Debug/4g1632v3/x86_64
-olm
-jvmArgs : 
-

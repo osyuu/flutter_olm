@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "olmKit/crypto.h"
-#include "olmKit/memory.hh"
+#include "olm/crypto.h"
+#include "olm/memory.hh"
 
 #include <cstring>
 
@@ -75,7 +75,7 @@ inline static void hmac_sha256_init(
     }
     ::sha256_init(context);
     ::sha256_update(context, i_pad, SHA256_BLOCK_LENGTH);
-    olmKit::unset(i_pad);
+    olm::unset(i_pad);
 }
 
 
@@ -94,8 +94,8 @@ inline static void hmac_sha256_final(
     ::sha256_init(&final_context);
     ::sha256_update(&final_context, o_pad, sizeof(o_pad));
     ::sha256_final(&final_context, output);
-    olmKit::unset(final_context);
-    olmKit::unset(o_pad);
+    olm::unset(final_context);
+    olm::unset(o_pad);
 }
 
 } // namespace
@@ -196,8 +196,8 @@ void _olm_crypto_aes_encrypt_cbc(
         input_block[i] ^= AES_BLOCK_LENGTH - input_length;
     }
     ::aes_encrypt(input_block, output, key_schedule, AES_KEY_BITS);
-    olmKit::unset(key_schedule);
-    olmKit::unset(input_block);
+    olm::unset(key_schedule);
+    olm::unset(input_block);
 }
 
 
@@ -218,9 +218,9 @@ std::size_t _olm_crypto_aes_decrypt_cbc(
         xor_block<AES_BLOCK_LENGTH>(&output[i], block1);
         std::memcpy(block1, block2, AES_BLOCK_LENGTH);
     }
-    olmKit::unset(key_schedule);
-    olmKit::unset(block1);
-    olmKit::unset(block2);
+    olm::unset(key_schedule);
+    olm::unset(block1);
+    olm::unset(block2);
     std::size_t padding = output[input_length - 1];
     return (padding > input_length) ? std::size_t(-1) : (input_length - padding);
 }
@@ -234,7 +234,7 @@ void _olm_crypto_sha256(
     ::sha256_init(&context);
     ::sha256_update(&context, input, input_length);
     ::sha256_final(&context, output);
-    olmKit::unset(context);
+    olm::unset(context);
 }
 
 
@@ -249,8 +249,8 @@ void _olm_crypto_hmac_sha256(
     hmac_sha256_init(&context, hmac_key);
     ::sha256_update(&context, input, input_length);
     hmac_sha256_final(&context, hmac_key, output);
-    olmKit::unset(hmac_key);
-    olmKit::unset(context);
+    olm::unset(hmac_key);
+    olm::unset(context);
 }
 
 
@@ -293,7 +293,7 @@ void _olm_crypto_hkdf_sha256(
         hmac_sha256_final(&context, hmac_key, step_result);
     }
     std::memcpy(output, step_result, bytes_remaining);
-    olmKit::unset(context);
-    olmKit::unset(hmac_key);
-    olmKit::unset(step_result);
+    olm::unset(context);
+    olm::unset(hmac_key);
+    olm::unset(step_result);
 }

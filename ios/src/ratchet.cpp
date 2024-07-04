@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "olmKit/ratchet.hh"
-#include "olmKit/message.hh"
-#include "olmKit/memory.hh"
-#include "olmKit/cipher.h"
-#include "olmKit/pickle.hh"
+#include "olm/ratchet.hh"
+#include "olm/message.hh"
+#include "olm/memory.hh"
+#include "olm/cipher.h"
+#include "olm/pickle.hh"
 
 #include <cstring>
 
@@ -40,16 +40,16 @@ static const std::size_t MAX_MESSAGE_GAP = 2000;
  *                            C(n,0)
  */
 static void create_chain_key(
-    olmKit::SharedKey const & root_key,
+    olm::SharedKey const & root_key,
     _olm_curve25519_key_pair const & our_key,
     _olm_curve25519_public_key const & their_key,
-    olmKit::KdfInfo const & info,
-    olmKit::SharedKey & new_root_key,
-    olmKit::ChainKey & new_chain_key
+    olm::KdfInfo const & info,
+    olm::SharedKey & new_root_key,
+    olm::ChainKey & new_chain_key
 ) {
-    olmKit::SharedKey secret;
+    olm::SharedKey secret;
     _olm_crypto_curve25519_shared_secret(&our_key, &their_key, secret);
-    std::uint8_t derived_secrets[2 * olmKit::OLM_SHARED_KEY_LENGTH];
+    std::uint8_t derived_secrets[2 * olm::OLM_SHARED_KEY_LENGTH];
     _olm_crypto_hkdf_sha256(
         secret, sizeof(secret),
         root_key, sizeof(root_key),
@@ -57,17 +57,17 @@ static void create_chain_key(
         derived_secrets, sizeof(derived_secrets)
     );
     std::uint8_t const * pos = derived_secrets;
-    pos = olmKit::load_array(new_root_key, pos);
-    pos = olmKit::load_array(new_chain_key.key, pos);
+    pos = olm::load_array(new_root_key, pos);
+    pos = olm::load_array(new_chain_key.key, pos);
     new_chain_key.index = 0;
-    olmKit::unset(derived_secrets);
-    olmKit::unset(secret);
+    olm::unset(derived_secrets);
+    olm::unset(secret);
 }
 
 
 static void advance_chain_key(
-    olmKit::ChainKey const & chain_key,
-    olmKit::ChainKey & new_chain_key
+    olm::ChainKey const & chain_key,
+    olm::ChainKey & new_chain_key
 ) {
     _olm_crypto_hmac_sha256(
         chain_key.key, sizeof(chain_key.key),
@@ -79,9 +79,9 @@ static void advance_chain_key(
 
 
 static void create_message_keys(
-    olmKit::ChainKey const & chain_key,
-    olmKit::KdfInfo const & info,
-    olmKit::MessageKey & message_key) {
+    olm::ChainKey const & chain_key,
+    olm::KdfInfo const & info,
+    olm::MessageKey & message_key) {
     _olm_crypto_hmac_sha256(
         chain_key.key, sizeof(chain_key.key),
         MESSAGE_KEY_SEED, sizeof(MESSAGE_KEY_SEED),
@@ -93,8 +93,8 @@ static void create_message_keys(
 
 static std::size_t verify_mac_and_decrypt(
     _olm_cipher const *cipher,
-    olmKit::MessageKey const & message_key,
-    olmKit::MessageReader const & reader,
+    olm::MessageKey const & message_key,
+    olm::MessageReader const & reader,
     std::uint8_t * plaintext, std::size_t max_plaintext_length
 ) {
     return cipher->ops->decrypt(
@@ -108,9 +108,9 @@ static std::size_t verify_mac_and_decrypt(
 
 
 static std::size_t verify_mac_and_decrypt_for_existing_chain(
-    olmKit::Ratchet const & session,
-    olmKit::ChainKey const & chain,
-    olmKit::MessageReader const & reader,
+    olm::Ratchet const & session,
+    olm::ChainKey const & chain,
+    olm::MessageReader const & reader,
     std::uint8_t * plaintext, std::size_t max_plaintext_length
 ) {
     if (reader.counter < chain.index) {
@@ -122,13 +122,13 @@ static std::size_t verify_mac_and_decrypt_for_existing_chain(
         return std::size_t(-1);
     }
 
-    olmKit::ChainKey new_chain = chain;
+    olm::ChainKey new_chain = chain;
 
     while (new_chain.index < reader.counter) {
         advance_chain_key(new_chain, new_chain);
     }
 
-    olmKit::MessageKey message_key;
+    olm::MessageKey message_key;
     create_message_keys(new_chain, session.kdf_info, message_key);
 
     std::size_t result = verify_mac_and_decrypt(
@@ -136,18 +136,18 @@ static std::size_t verify_mac_and_decrypt_for_existing_chain(
         plaintext, max_plaintext_length
     );
 
-    olmKit::unset(new_chain);
+    olm::unset(new_chain);
     return result;
 }
 
 
 static std::size_t verify_mac_and_decrypt_for_new_chain(
-    olmKit::Ratchet const & session,
-    olmKit::MessageReader const & reader,
+    olm::Ratchet const & session,
+    olm::MessageReader const & reader,
     std::uint8_t * plaintext, std::size_t max_plaintext_length
 ) {
-    olmKit::SharedKey new_root_key;
-    olmKit::ReceiverChain new_chain;
+    olm::SharedKey new_root_key;
+    olm::ReceiverChain new_chain;
 
     /* They shouldn't move to a new chain until we've sent them a message
      * acknowledging the last one */
@@ -159,7 +159,7 @@ static std::size_t verify_mac_and_decrypt_for_new_chain(
     if (reader.counter > MAX_MESSAGE_GAP) {
         return std::size_t(-1);
     }
-    olmKit::load_array(new_chain.ratchet_key.public_key, reader.ratchet_key);
+    olm::load_array(new_chain.ratchet_key.public_key, reader.ratchet_key);
 
     create_chain_key(
         session.root_key, session.sender_chain[0].ratchet_key,
@@ -170,16 +170,16 @@ static std::size_t verify_mac_and_decrypt_for_new_chain(
         session, new_chain.chain_key, reader,
         plaintext, max_plaintext_length
     );
-    olmKit::unset(new_root_key);
-    olmKit::unset(new_chain);
+    olm::unset(new_root_key);
+    olm::unset(new_chain);
     return result;
 }
 
 } // namespace
 
 
-olmKit::Ratchet::Ratchet(
-    olmKit::KdfInfo const & kdf_info,
+olm::Ratchet::Ratchet(
+    olm::KdfInfo const & kdf_info,
     _olm_cipher const * ratchet_cipher
 ) : kdf_info(kdf_info),
     ratchet_cipher(ratchet_cipher),
@@ -187,11 +187,11 @@ olmKit::Ratchet::Ratchet(
 }
 
 
-void olmKit::Ratchet::initialise_as_bob(
+void olm::Ratchet::initialise_as_bob(
     std::uint8_t const * shared_secret, std::size_t shared_secret_length,
     _olm_curve25519_public_key const & their_ratchet_key
 ) {
-    std::uint8_t derived_secrets[2 * olmKit::OLM_SHARED_KEY_LENGTH];
+    std::uint8_t derived_secrets[2 * olm::OLM_SHARED_KEY_LENGTH];
     _olm_crypto_hkdf_sha256(
         shared_secret, shared_secret_length,
         nullptr, 0,
@@ -201,18 +201,18 @@ void olmKit::Ratchet::initialise_as_bob(
     receiver_chains.insert();
     receiver_chains[0].chain_key.index = 0;
     std::uint8_t const * pos = derived_secrets;
-    pos = olmKit::load_array(root_key, pos);
-    pos = olmKit::load_array(receiver_chains[0].chain_key.key, pos);
+    pos = olm::load_array(root_key, pos);
+    pos = olm::load_array(receiver_chains[0].chain_key.key, pos);
     receiver_chains[0].ratchet_key = their_ratchet_key;
-    olmKit::unset(derived_secrets);
+    olm::unset(derived_secrets);
 }
 
 
-void olmKit::Ratchet::initialise_as_alice(
+void olm::Ratchet::initialise_as_alice(
     std::uint8_t const * shared_secret, std::size_t shared_secret_length,
     _olm_curve25519_key_pair const & our_ratchet_key
 ) {
-    std::uint8_t derived_secrets[2 * olmKit::OLM_SHARED_KEY_LENGTH];
+    std::uint8_t derived_secrets[2 * olm::OLM_SHARED_KEY_LENGTH];
     _olm_crypto_hkdf_sha256(
         shared_secret, shared_secret_length,
         nullptr, 0,
@@ -222,132 +222,132 @@ void olmKit::Ratchet::initialise_as_alice(
     sender_chain.insert();
     sender_chain[0].chain_key.index = 0;
     std::uint8_t const * pos = derived_secrets;
-    pos = olmKit::load_array(root_key, pos);
-    pos = olmKit::load_array(sender_chain[0].chain_key.key, pos);
+    pos = olm::load_array(root_key, pos);
+    pos = olm::load_array(sender_chain[0].chain_key.key, pos);
     sender_chain[0].ratchet_key = our_ratchet_key;
-    olmKit::unset(derived_secrets);
+    olm::unset(derived_secrets);
 }
 
-namespace olmKit {
+namespace olm {
 
 
 static std::size_t pickle_length(
-    const olmKit::SharedKey & value
+    const olm::SharedKey & value
 ) {
-    return olmKit::OLM_SHARED_KEY_LENGTH;
+    return olm::OLM_SHARED_KEY_LENGTH;
 }
 
 
 static std::uint8_t * pickle(
     std::uint8_t * pos,
-    const olmKit::SharedKey & value
+    const olm::SharedKey & value
 ) {
-    return olmKit::pickle_bytes(pos, value, olmKit::OLM_SHARED_KEY_LENGTH);
+    return olm::pickle_bytes(pos, value, olm::OLM_SHARED_KEY_LENGTH);
 }
 
 
 static std::uint8_t const * unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
-    olmKit::SharedKey & value
+    olm::SharedKey & value
 ) {
-    return olmKit::unpickle_bytes(pos, end, value, olmKit::OLM_SHARED_KEY_LENGTH);
+    return olm::unpickle_bytes(pos, end, value, olm::OLM_SHARED_KEY_LENGTH);
 }
 
 
 static std::size_t pickle_length(
-    const olmKit::SenderChain & value
+    const olm::SenderChain & value
 ) {
     std::size_t length = 0;
-    length += olmKit::pickle_length(value.ratchet_key);
-    length += olmKit::pickle_length(value.chain_key.key);
-    length += olmKit::pickle_length(value.chain_key.index);
+    length += olm::pickle_length(value.ratchet_key);
+    length += olm::pickle_length(value.chain_key.key);
+    length += olm::pickle_length(value.chain_key.index);
     return length;
 }
 
 
 static std::uint8_t * pickle(
     std::uint8_t * pos,
-    const olmKit::SenderChain & value
+    const olm::SenderChain & value
 ) {
-    pos = olmKit::pickle(pos, value.ratchet_key);
-    pos = olmKit::pickle(pos, value.chain_key.key);
-    pos = olmKit::pickle(pos, value.chain_key.index);
+    pos = olm::pickle(pos, value.ratchet_key);
+    pos = olm::pickle(pos, value.chain_key.key);
+    pos = olm::pickle(pos, value.chain_key.index);
     return pos;
 }
 
 
 static std::uint8_t const * unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
-    olmKit::SenderChain & value
+    olm::SenderChain & value
 ) {
-    pos = olmKit::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.chain_key.key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.chain_key.index); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.chain_key.key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.chain_key.index); UNPICKLE_OK(pos);
     return pos;
 }
 
 static std::size_t pickle_length(
-    const olmKit::ReceiverChain & value
+    const olm::ReceiverChain & value
 ) {
     std::size_t length = 0;
-    length += olmKit::pickle_length(value.ratchet_key);
-    length += olmKit::pickle_length(value.chain_key.key);
-    length += olmKit::pickle_length(value.chain_key.index);
+    length += olm::pickle_length(value.ratchet_key);
+    length += olm::pickle_length(value.chain_key.key);
+    length += olm::pickle_length(value.chain_key.index);
     return length;
 }
 
 
 static std::uint8_t * pickle(
     std::uint8_t * pos,
-    const olmKit::ReceiverChain & value
+    const olm::ReceiverChain & value
 ) {
-    pos = olmKit::pickle(pos, value.ratchet_key);
-    pos = olmKit::pickle(pos, value.chain_key.key);
-    pos = olmKit::pickle(pos, value.chain_key.index);
+    pos = olm::pickle(pos, value.ratchet_key);
+    pos = olm::pickle(pos, value.chain_key.key);
+    pos = olm::pickle(pos, value.chain_key.index);
     return pos;
 }
 
 
 static std::uint8_t const * unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
-    olmKit::ReceiverChain & value
+    olm::ReceiverChain & value
 ) {
-    pos = olmKit::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.chain_key.key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.chain_key.index); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.chain_key.key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.chain_key.index); UNPICKLE_OK(pos);
     return pos;
 }
 
 
 static std::size_t pickle_length(
-    const olmKit::SkippedMessageKey & value
+    const olm::SkippedMessageKey & value
 ) {
     std::size_t length = 0;
-    length += olmKit::pickle_length(value.ratchet_key);
-    length += olmKit::pickle_length(value.message_key.key);
-    length += olmKit::pickle_length(value.message_key.index);
+    length += olm::pickle_length(value.ratchet_key);
+    length += olm::pickle_length(value.message_key.key);
+    length += olm::pickle_length(value.message_key.index);
     return length;
 }
 
 
 static std::uint8_t * pickle(
     std::uint8_t * pos,
-    const olmKit::SkippedMessageKey & value
+    const olm::SkippedMessageKey & value
 ) {
-    pos = olmKit::pickle(pos, value.ratchet_key);
-    pos = olmKit::pickle(pos, value.message_key.key);
-    pos = olmKit::pickle(pos, value.message_key.index);
+    pos = olm::pickle(pos, value.ratchet_key);
+    pos = olm::pickle(pos, value.message_key.key);
+    pos = olm::pickle(pos, value.message_key.index);
     return pos;
 }
 
 
 static std::uint8_t const * unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
-    olmKit::SkippedMessageKey & value
+    olm::SkippedMessageKey & value
 ) {
-    pos = olmKit::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.message_key.key); UNPICKLE_OK(pos);
-    pos = olmKit::unpickle(pos, end, value.message_key.index); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.ratchet_key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.message_key.key); UNPICKLE_OK(pos);
+    pos = olm::unpickle(pos, end, value.message_key.index); UNPICKLE_OK(pos);
     return pos;
 }
 
@@ -355,20 +355,20 @@ static std::uint8_t const * unpickle(
 } // namespace olm
 
 
-std::size_t olmKit::pickle_length(
-    olmKit::Ratchet const & value
+std::size_t olm::pickle_length(
+    olm::Ratchet const & value
 ) {
     std::size_t length = 0;
-    length += olmKit::OLM_SHARED_KEY_LENGTH;
-    length += olmKit::pickle_length(value.sender_chain);
-    length += olmKit::pickle_length(value.receiver_chains);
-    length += olmKit::pickle_length(value.skipped_message_keys);
+    length += olm::OLM_SHARED_KEY_LENGTH;
+    length += olm::pickle_length(value.sender_chain);
+    length += olm::pickle_length(value.receiver_chains);
+    length += olm::pickle_length(value.skipped_message_keys);
     return length;
 }
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
-    olmKit::Ratchet const & value
+    olm::Ratchet const & value
 ) {
     pos = pickle(pos, value.root_key);
     pos = pickle(pos, value.sender_chain);
@@ -378,9 +378,9 @@ std::uint8_t * olmKit::pickle(
 }
 
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
-    olmKit::Ratchet & value,
+    olm::Ratchet & value,
     bool includes_chain_index
 ) {
     pos = unpickle(pos, end, value.root_key); UNPICKLE_OK(pos);
@@ -397,7 +397,7 @@ std::uint8_t const * olmKit::unpickle(
 }
 
 
-std::size_t olmKit::Ratchet::encrypt_output_length(
+std::size_t olm::Ratchet::encrypt_output_length(
     std::size_t plaintext_length
 ) const {
     std::size_t counter = 0;
@@ -408,18 +408,18 @@ std::size_t olmKit::Ratchet::encrypt_output_length(
         ratchet_cipher,
         plaintext_length
     );
-    return olmKit::encode_message_length(
+    return olm::encode_message_length(
         counter, CURVE25519_KEY_LENGTH, padded, ratchet_cipher->ops->mac_length(ratchet_cipher)
     );
 }
 
 
-std::size_t olmKit::Ratchet::encrypt_random_length() const {
+std::size_t olm::Ratchet::encrypt_random_length() const {
     return sender_chain.empty() ? CURVE25519_RANDOM_LENGTH : 0;
 }
 
 
-std::size_t olmKit::Ratchet::encrypt(
+std::size_t olm::Ratchet::encrypt(
     std::uint8_t const * plaintext, std::size_t plaintext_length,
     std::uint8_t const * random, std::size_t random_length,
     std::uint8_t * output, std::size_t max_output_length
@@ -459,15 +459,15 @@ std::size_t olmKit::Ratchet::encrypt(
     _olm_curve25519_public_key const & ratchet_key =
         sender_chain[0].ratchet_key.public_key;
 
-    olmKit::MessageWriter writer;
+    olm::MessageWriter writer;
 
-    olmKit::encode_message(
+    olm::encode_message(
         writer, PROTOCOL_VERSION, counter, CURVE25519_KEY_LENGTH,
         ciphertext_length,
         output
     );
 
-    olmKit::store_array(writer.ratchet_key, ratchet_key.public_key);
+    olm::store_array(writer.ratchet_key, ratchet_key.public_key);
 
     ratchet_cipher->ops->encrypt(
         ratchet_cipher,
@@ -477,16 +477,16 @@ std::size_t olmKit::Ratchet::encrypt(
         output, output_length
     );
 
-    olmKit::unset(keys);
+    olm::unset(keys);
     return output_length;
 }
 
 
-std::size_t olmKit::Ratchet::decrypt_max_plaintext_length(
+std::size_t olm::Ratchet::decrypt_max_plaintext_length(
     std::uint8_t const * input, std::size_t input_length
 ) {
-    olmKit::MessageReader reader;
-    olmKit::decode_message(
+    olm::MessageReader reader;
+    olm::decode_message(
         reader, input, input_length,
         ratchet_cipher->ops->mac_length(ratchet_cipher)
     );
@@ -501,12 +501,12 @@ std::size_t olmKit::Ratchet::decrypt_max_plaintext_length(
 }
 
 
-std::size_t olmKit::Ratchet::decrypt(
+std::size_t olm::Ratchet::decrypt(
     std::uint8_t const * input, std::size_t input_length,
     std::uint8_t * plaintext, std::size_t max_plaintext_length
 ) {
-    olmKit::MessageReader reader;
-    olmKit::decode_message(
+    olm::MessageReader reader;
+    olm::decode_message(
         reader, input, input_length,
         ratchet_cipher->ops->mac_length(ratchet_cipher)
     );
@@ -538,7 +538,7 @@ std::size_t olmKit::Ratchet::decrypt(
 
     ReceiverChain * chain = nullptr;
 
-    for (olmKit::ReceiverChain & receiver_chain : receiver_chains) {
+    for (olm::ReceiverChain & receiver_chain : receiver_chains) {
         if (0 == std::memcmp(
                 receiver_chain.ratchet_key.public_key, reader.ratchet_key,
                 CURVE25519_KEY_LENGTH
@@ -557,7 +557,7 @@ std::size_t olmKit::Ratchet::decrypt(
     } else if (chain->chain_key.index > reader.counter) {
         /* Chain already advanced beyond the key for this message
          * Check if the message keys are in the skipped key list. */
-        for (olmKit::SkippedMessageKey & skipped : skipped_message_keys) {
+        for (olm::SkippedMessageKey & skipped : skipped_message_keys) {
             if (reader.counter == skipped.message_key.index
                     && 0 == std::memcmp(
                         skipped.ratchet_key.public_key, reader.ratchet_key,
@@ -574,7 +574,7 @@ std::size_t olmKit::Ratchet::decrypt(
                 if (result != std::size_t(-1)) {
                     /* Remove the key from the skipped keys now that we've
                      * decoded the message it corresponds to. */
-                    olmKit::unset(skipped);
+                    olm::unset(skipped);
                     skipped_message_keys.erase(&skipped);
                     return result;
                 }
@@ -599,7 +599,7 @@ std::size_t olmKit::Ratchet::decrypt(
          * We will generate a new key when we send the next message. */
 
         chain = receiver_chains.insert();
-        olmKit::load_array(chain->ratchet_key.public_key, reader.ratchet_key);
+        olm::load_array(chain->ratchet_key.public_key, reader.ratchet_key);
 
         // TODO: we've already done this once, in
         // verify_mac_and_decrypt_for_new_chain(). we could reuse the result.
@@ -608,12 +608,12 @@ std::size_t olmKit::Ratchet::decrypt(
             kdf_info, root_key, chain->chain_key
         );
 
-        olmKit::unset(sender_chain[0]);
+        olm::unset(sender_chain[0]);
         sender_chain.erase(sender_chain.begin());
     }
 
     while (chain->chain_key.index < reader.counter) {
-        olmKit::SkippedMessageKey & key = *skipped_message_keys.insert();
+        olm::SkippedMessageKey & key = *skipped_message_keys.insert();
         create_message_keys(chain->chain_key, kdf_info, key.message_key);
         key.ratchet_key = chain->ratchet_key;
         advance_chain_key(chain->chain_key, chain->chain_key);

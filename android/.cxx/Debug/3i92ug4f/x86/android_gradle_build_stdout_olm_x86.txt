@@ -1,0 +1,24 @@
+ninja: Entering directory `/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86'
+[1/23] Building CXX object CMakeFiles/olm.dir/src/base64.cpp.o
+[2/23] Building CXX object CMakeFiles/olm.dir/src/pickle.cpp.o
+[3/23] Building CXX object CMakeFiles/olm.dir/src/utility.cpp.o
+[4/23] Building C object CMakeFiles/olm.dir/src/sas.c.o
+[5/23] Building C object CMakeFiles/olm.dir/src/error.c.o
+[6/23] Building C object CMakeFiles/olm.dir/src/megolm.c.o
+[7/23] Building C object CMakeFiles/olm.dir/src/ed25519.c.o
+[8/23] Building CXX object CMakeFiles/olm.dir/src/memory.cpp.o
+[9/23] Building C object CMakeFiles/olm.dir/src/inbound_group_session.c.o
+[10/23] Building CXX object CMakeFiles/olm.dir/src/session.cpp.o
+[11/23] Building CXX object CMakeFiles/olm.dir/src/cipher.cpp.o
+[12/23] Building CXX object CMakeFiles/olm.dir/src/message.cpp.o
+[13/23] Building C object CMakeFiles/olm.dir/lib/crypto-algorithms/sha256.c.o
+[14/23] Building CXX object CMakeFiles/olm.dir/src/crypto.cpp.o
+[15/23] Building CXX object CMakeFiles/olm.dir/src/pk.cpp.o
+[16/23] Building CXX object CMakeFiles/olm.dir/src/account.cpp.o
+[17/23] Building C object CMakeFiles/olm.dir/src/outbound_group_session.c.o
+[18/23] Building C object CMakeFiles/olm.dir/src/pickle_encoding.c.o
+[19/23] Building CXX object CMakeFiles/olm.dir/src/ratchet.cpp.o
+[20/23] Building C object CMakeFiles/olm.dir/lib/crypto-algorithms/aes.c.o
+[21/23] Building C object CMakeFiles/olm.dir/lib/curve25519-donna/curve25519-donna.c.o
+[22/23] Building CXX object CMakeFiles/olm.dir/src/olm.cpp.o
+[23/23] Linking CXX shared library libolm.so

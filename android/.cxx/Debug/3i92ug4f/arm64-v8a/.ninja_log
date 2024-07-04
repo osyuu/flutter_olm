@@ -1,0 +1,24 @@
+# ninja log v5
+4	316	1720062860	CMakeFiles/olm.dir/src/base64.cpp.o	42842058b3f270b2
+17	389	1720062860	CMakeFiles/olm.dir/src/pickle.cpp.o	aa83bf780c276064
+316	528	1720062860	CMakeFiles/olm.dir/src/utility.cpp.o	5f3d16d6f556ec4a
+389	611	1720062860	CMakeFiles/olm.dir/src/sas.c.o	376fa857bd913856
+611	714	1720062861	CMakeFiles/olm.dir/src/error.c.o	988699145c5fdab1
+714	818	1720062861	CMakeFiles/olm.dir/src/megolm.c.o	bdbb57549cdb002e
+818	961	1720062861	CMakeFiles/olm.dir/src/inbound_group_session.c.o	ed7e1bec608e488b
+528	1179	1720062861	CMakeFiles/olm.dir/src/ed25519.c.o	2f1c3669ae48ad09
+1179	1295	1720062861	CMakeFiles/olm.dir/lib/crypto-algorithms/sha256.c.o	92d8e2727bf18009
+1295	1419	1720062861	CMakeFiles/olm.dir/src/outbound_group_session.c.o	41085f84b43034bf
+1419	1540	1720062861	CMakeFiles/olm.dir/src/pickle_encoding.c.o	bfbd5c8f3864619d
+13	1554	1720062861	CMakeFiles/olm.dir/src/memory.cpp.o	3959cc8a6333ca57
+6	1645	1720062862	CMakeFiles/olm.dir/src/cipher.cpp.o	98b1bf1d890fd03c
+2	1668	1720062862	CMakeFiles/olm.dir/src/account.cpp.o	5469bd07b7fea454
+1554	1707	1720062862	CMakeFiles/olm.dir/lib/curve25519-donna/curve25519-donna.c.o	ec0630e957e164d5
+15	1716	1720062862	CMakeFiles/olm.dir/src/message.cpp.o	81b3c5f443f2ecd2
+1540	1718	1720062862	CMakeFiles/olm.dir/lib/crypto-algorithms/aes.c.o	aa4bf3f3619e8c27
+0	1718	1720062862	CMakeFiles/olm.dir/src/pk.cpp.o	c112e459f1f1cd1
+9	1740	1720062862	CMakeFiles/olm.dir/src/crypto.cpp.o	99f39e0f116677ab
+36	1766	1720062862	CMakeFiles/olm.dir/src/session.cpp.o	3eddeca04795aa64
+33	1776	1720062862	CMakeFiles/olm.dir/src/ratchet.cpp.o	636ccca99c24d335
+961	1891	1720062862	CMakeFiles/olm.dir/src/olm.cpp.o	1cae30fc3c39b9c8
+1891	1998	1720062862	libolm.so	4ce1f86a68a8ef83

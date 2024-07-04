@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "olmKit/memory.hh"
-#include "olmKit/memory.h"
+#include "olm/memory.hh"
+#include "olm/memory.h"
 
 void _olm_unset(
     void volatile * buffer, size_t buffer_length
 ) {
-    olmKit::unset(buffer, buffer_length);
+    olm::unset(buffer, buffer_length);
 }
 
-void olmKit::unset(
+void olm::unset(
     void volatile * buffer, std::size_t buffer_length
 ) {
     char volatile * pos = reinterpret_cast<char volatile *>(buffer);
@@ -32,7 +32,7 @@ void olmKit::unset(
 }
 
 
-bool olmKit::is_equal(
+bool olm::is_equal(
     std::uint8_t const * buffer_a,
     std::uint8_t const * buffer_b,
     std::size_t length

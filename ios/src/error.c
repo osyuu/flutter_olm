@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "olmKit/error.h"
+#include "olm/error.h"
 
 static const char * ERRORS[] = {
     "SUCCESS",

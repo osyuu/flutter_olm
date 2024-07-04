@@ -1,4 +1,4 @@
 module libolm {
-    header "olmKit/olm.h"
+    header "olm/olm.h"
     export *
 }

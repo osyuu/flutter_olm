@@ -14,8 +14,8 @@
  */
 #include <cassert>
 
-#include "olmKit/base64.h"
-#include "olmKit/base64.hh"
+#include "olm/base64.h"
+#include "olm/base64.hh"
 
 namespace {
 
@@ -47,13 +47,13 @@ static const std::uint8_t DECODE_BASE64[128] = {
 } // namespace
 
 
-std::size_t olmKit::encode_base64_length(
+std::size_t olm::encode_base64_length(
     std::size_t input_length
 ) {
     return 4 * ((input_length + 2) / 3) + (input_length + 2) % 3 - 2;
 }
 
-std::uint8_t * olmKit::encode_base64(
+std::uint8_t * olm::encode_base64(
     std::uint8_t const * input, std::size_t input_length,
     std::uint8_t * output
 ) {
@@ -92,7 +92,7 @@ std::uint8_t * olmKit::encode_base64(
 }
 
 
-std::size_t olmKit::decode_base64_length(
+std::size_t olm::decode_base64_length(
     std::size_t input_length
 ) {
     if (input_length % 4 == 1) {
@@ -103,11 +103,11 @@ std::size_t olmKit::decode_base64_length(
 }
 
 
-std::size_t olmKit::decode_base64(
+std::size_t olm::decode_base64(
     std::uint8_t const * input, std::size_t input_length,
     std::uint8_t * output
 ) {
-    size_t raw_length = olmKit::decode_base64_length(input_length);
+    size_t raw_length = olm::decode_base64_length(input_length);
 
     if (raw_length == std::size_t(-1)) {
         return std::size_t(-1);
@@ -162,26 +162,26 @@ std::size_t olmKit::decode_base64(
 size_t _olm_encode_base64_length(
     size_t input_length
 ) {
-    return olmKit::encode_base64_length(input_length);
+    return olm::encode_base64_length(input_length);
 }
 
 size_t _olm_encode_base64(
     uint8_t const * input, size_t input_length,
     uint8_t * output
 ) {
-    uint8_t * r = olmKit::encode_base64(input, input_length, output);
+    uint8_t * r = olm::encode_base64(input, input_length, output);
     return r - output;
 }
 
 size_t _olm_decode_base64_length(
     size_t input_length
 ) {
-    return olmKit::decode_base64_length(input_length);
+    return olm::decode_base64_length(input_length);
 }
 
 size_t _olm_decode_base64(
     uint8_t const * input, size_t input_length,
     uint8_t * output
 ) {
-    return olmKit::decode_base64(input, input_length, output);
+    return olm::decode_base64(input, input_length, output);
 }

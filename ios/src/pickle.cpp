@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "olmKit/pickle.hh"
-#include "olmKit/pickle.h"
+#include "olm/pickle.hh"
+#include "olm/pickle.h"
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
     std::uint32_t value
 ) {
@@ -25,7 +25,7 @@ std::uint8_t * olmKit::pickle(
 }
 
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
     std::uint32_t & value
 ) {
@@ -35,7 +35,7 @@ std::uint8_t const * olmKit::unpickle(
     return pos;
 }
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
     std::uint8_t value
 ) {
@@ -43,7 +43,7 @@ std::uint8_t * olmKit::pickle(
     return pos;
 }
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
     std::uint8_t & value
 ) {
@@ -52,7 +52,7 @@ std::uint8_t const * olmKit::unpickle(
     return pos;
 }
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
     bool value
 ) {
@@ -60,7 +60,7 @@ std::uint8_t * olmKit::pickle(
     return pos;
 }
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
     bool & value
 ) {
@@ -69,7 +69,7 @@ std::uint8_t const * olmKit::unpickle(
     return pos;
 }
 
-std::uint8_t * olmKit::pickle_bytes(
+std::uint8_t * olm::pickle_bytes(
     std::uint8_t * pos,
     std::uint8_t const * bytes, std::size_t bytes_length
 ) {
@@ -77,7 +77,7 @@ std::uint8_t * olmKit::pickle_bytes(
     return pos + bytes_length;
 }
 
-std::uint8_t const * olmKit::unpickle_bytes(
+std::uint8_t const * olm::unpickle_bytes(
     std::uint8_t const * pos, std::uint8_t const * end,
     std::uint8_t * bytes, std::size_t bytes_length
 ) {
@@ -87,35 +87,35 @@ std::uint8_t const * olmKit::unpickle_bytes(
 }
 
 
-std::size_t olmKit::pickle_length(
+std::size_t olm::pickle_length(
     const _olm_curve25519_public_key & value
 ) {
     return sizeof(value.public_key);
 }
 
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
     const _olm_curve25519_public_key & value
 ) {
-    pos = olmKit::pickle_bytes(
+    pos = olm::pickle_bytes(
         pos, value.public_key, sizeof(value.public_key)
     );
     return pos;
 }
 
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
     _olm_curve25519_public_key & value
 ) {
-    return olmKit::unpickle_bytes(
+    return olm::unpickle_bytes(
         pos, end, value.public_key, sizeof(value.public_key)
     );
 }
 
 
-std::size_t olmKit::pickle_length(
+std::size_t olm::pickle_length(
     const _olm_curve25519_key_pair & value
 ) {
     return sizeof(value.public_key.public_key)
@@ -123,15 +123,15 @@ std::size_t olmKit::pickle_length(
 }
 
 
-std::uint8_t * olmKit::pickle(
+std::uint8_t * olm::pickle(
     std::uint8_t * pos,
     const _olm_curve25519_key_pair & value
 ) {
-    pos = olmKit::pickle_bytes(
+    pos = olm::pickle_bytes(
         pos, value.public_key.public_key,
         sizeof(value.public_key.public_key)
     );
-    pos = olmKit::pickle_bytes(
+    pos = olm::pickle_bytes(
         pos, value.private_key.private_key,
         sizeof(value.private_key.private_key)
     );
@@ -139,17 +139,17 @@ std::uint8_t * olmKit::pickle(
 }
 
 
-std::uint8_t const * olmKit::unpickle(
+std::uint8_t const * olm::unpickle(
     std::uint8_t const * pos, std::uint8_t const * end,
     _olm_curve25519_key_pair & value
 ) {
-    pos = olmKit::unpickle_bytes(
+    pos = olm::unpickle_bytes(
         pos, end, value.public_key.public_key,
         sizeof(value.public_key.public_key)
     );
     if (!pos) return nullptr;
 
-    pos = olmKit::unpickle_bytes(
+    pos = olm::unpickle_bytes(
         pos, end, value.private_key.private_key,
         sizeof(value.private_key.private_key)
     );
@@ -171,7 +171,7 @@ std::uint8_t * _olm_pickle_ed25519_public_key(
     std::uint8_t * pos,
     const _olm_ed25519_public_key *value
 ) {
-    return olmKit::pickle_bytes(
+    return olm::pickle_bytes(
         pos, value->public_key, sizeof(value->public_key)
     );
 }
@@ -181,7 +181,7 @@ std::uint8_t const * _olm_unpickle_ed25519_public_key(
     std::uint8_t const * pos, std::uint8_t const * end,
     _olm_ed25519_public_key * value
 ) {
-    return olmKit::unpickle_bytes(
+    return olm::unpickle_bytes(
         pos, end, value->public_key, sizeof(value->public_key)
     );
 }
@@ -199,11 +199,11 @@ std::uint8_t * _olm_pickle_ed25519_key_pair(
     std::uint8_t * pos,
     const _olm_ed25519_key_pair *value
 ) {
-    pos = olmKit::pickle_bytes(
+    pos = olm::pickle_bytes(
         pos, value->public_key.public_key,
         sizeof(value->public_key.public_key)
     );
-    pos = olmKit::pickle_bytes(
+    pos = olm::pickle_bytes(
         pos, value->private_key.private_key,
         sizeof(value->private_key.private_key)
     );
@@ -215,13 +215,13 @@ std::uint8_t const * _olm_unpickle_ed25519_key_pair(
     std::uint8_t const * pos, std::uint8_t const * end,
     _olm_ed25519_key_pair *value
 ) {
-    pos = olmKit::unpickle_bytes(
+    pos = olm::unpickle_bytes(
         pos, end, value->public_key.public_key,
         sizeof(value->public_key.public_key)
     );
     if (!pos) return nullptr;
 
-    pos = olmKit::unpickle_bytes(
+    pos = olm::unpickle_bytes(
         pos, end, value->private_key.private_key,
         sizeof(value->private_key.private_key)
     );
@@ -231,44 +231,44 @@ std::uint8_t const * _olm_unpickle_ed25519_key_pair(
 }
 
 uint8_t * _olm_pickle_uint32(uint8_t * pos, uint32_t value) {
-    return olmKit::pickle(pos, value);
+    return olm::pickle(pos, value);
 }
 
 uint8_t const * _olm_unpickle_uint32(
     uint8_t const * pos, uint8_t const * end,
     uint32_t *value
 ) {
-    return olmKit::unpickle(pos, end, *value);
+    return olm::unpickle(pos, end, *value);
 }
 
 uint8_t * _olm_pickle_uint8(uint8_t * pos, uint8_t value) {
-    return olmKit::pickle(pos, value);
+    return olm::pickle(pos, value);
 }
 
 uint8_t const * _olm_unpickle_uint8(
     uint8_t const * pos, uint8_t const * end,
     uint8_t *value
 ) {
-    return olmKit::unpickle(pos, end, *value);
+    return olm::unpickle(pos, end, *value);
 }
 
 uint8_t * _olm_pickle_bool(uint8_t * pos, int value) {
-    return olmKit::pickle(pos, (bool)value);
+    return olm::pickle(pos, (bool)value);
 }
 
 uint8_t const * _olm_unpickle_bool(
     uint8_t const * pos, uint8_t const * end,
     int *value
 ) {
-    return olmKit::unpickle(pos, end, *reinterpret_cast<bool *>(value));
+    return olm::unpickle(pos, end, *reinterpret_cast<bool *>(value));
 }
 
 uint8_t * _olm_pickle_bytes(uint8_t * pos, uint8_t const * bytes,
                            size_t bytes_length) {
-    return olmKit::pickle_bytes(pos, bytes, bytes_length);
+    return olm::pickle_bytes(pos, bytes, bytes_length);
 }
 
 uint8_t const * _olm_unpickle_bytes(uint8_t const * pos, uint8_t const * end,
                                    uint8_t * bytes, size_t bytes_length) {
-    return olmKit::unpickle_bytes(pos, end, bytes, bytes_length);
+    return olm::unpickle_bytes(pos, end, bytes, bytes_length);
 }

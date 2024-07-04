@@ -1,0 +1,7 @@
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/install/local.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/install/strip.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/install.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/list_install_components.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/edit_cache.dir
+/Users/phil/shaberi/flutter_olm-1.4.1/android/.cxx/Debug/3i92ug4f/x86_64/CMakeFiles/olm.dir

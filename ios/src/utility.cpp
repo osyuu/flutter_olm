@@ -13,21 +13,21 @@
  * limitations under the License.
  */
 
-#include "olmKit/utility.hh"
-#include "olmKit/crypto.h"
+#include "olm/utility.hh"
+#include "olm/crypto.h"
 
 
-olmKit::Utility::Utility(
+olm::Utility::Utility(
 ) : last_error(OlmErrorCode::OLM_SUCCESS) {
 }
 
 
-size_t olmKit::Utility::sha256_length() const {
+size_t olm::Utility::sha256_length() const {
     return SHA256_OUTPUT_LENGTH;
 }
 
 
-size_t olmKit::Utility::sha256(
+size_t olm::Utility::sha256(
     std::uint8_t const * input, std::size_t input_length,
     std::uint8_t * output, std::size_t output_length
 ) {
@@ -40,7 +40,7 @@ size_t olmKit::Utility::sha256(
 }
 
 
-size_t olmKit::Utility::ed25519_verify(
+size_t olm::Utility::ed25519_verify(
     _olm_ed25519_public_key const & key,
     std::uint8_t const * message, std::size_t message_length,
     std::uint8_t const * signature, std::size_t signature_length

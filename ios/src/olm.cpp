@@ -12,54 +12,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "olmKit/olm.h"
-#include "olmKit/session.hh"
-#include "olmKit/account.hh"
-#include "olmKit/cipher.h"
-#include "olmKit/pickle_encoding.h"
-#include "olmKit/utility.hh"
-#include "olmKit/base64.hh"
-#include "olmKit/memory.hh"
+#include "olm/olm.h"
+#include "olm/session.hh"
+#include "olm/account.hh"
+#include "olm/cipher.h"
+#include "olm/pickle_encoding.h"
+#include "olm/utility.hh"
+#include "olm/base64.hh"
+#include "olm/memory.hh"
 
 #include <new>
 #include <cstring>
 
 namespace {
 
-static OlmAccount * to_c(olmKit::Account * account) {
+static OlmAccount * to_c(olm::Account * account) {
     return reinterpret_cast<OlmAccount *>(account);
 }
 
-static OlmSession * to_c(olmKit::Session * session) {
+static OlmSession * to_c(olm::Session * session) {
     return reinterpret_cast<OlmSession *>(session);
 }
 
-static OlmUtility * to_c(olmKit::Utility * utility) {
+static OlmUtility * to_c(olm::Utility * utility) {
     return reinterpret_cast<OlmUtility *>(utility);
 }
 
-static olmKit::Account * from_c(OlmAccount * account) {
-    return reinterpret_cast<olmKit::Account *>(account);
+static olm::Account * from_c(OlmAccount * account) {
+    return reinterpret_cast<olm::Account *>(account);
 }
 
-static const olmKit::Account * from_c(OlmAccount const * account) {
-    return reinterpret_cast<olmKit::Account const *>(account);
+static const olm::Account * from_c(OlmAccount const * account) {
+    return reinterpret_cast<olm::Account const *>(account);
 }
 
-static olmKit::Session * from_c(OlmSession * session) {
-    return reinterpret_cast<olmKit::Session *>(session);
+static olm::Session * from_c(OlmSession * session) {
+    return reinterpret_cast<olm::Session *>(session);
 }
 
-static const olmKit::Session * from_c(OlmSession const * session) {
-    return reinterpret_cast<const olmKit::Session *>(session);
+static const olm::Session * from_c(OlmSession const * session) {
+    return reinterpret_cast<const olm::Session *>(session);
 }
 
-static olmKit::Utility * from_c(OlmUtility * utility) {
-    return reinterpret_cast<olmKit::Utility *>(utility);
+static olm::Utility * from_c(OlmUtility * utility) {
+    return reinterpret_cast<olm::Utility *>(utility);
 }
 
-static const olmKit::Utility * from_c(OlmUtility const * utility) {
-    return reinterpret_cast<const olmKit::Utility *>(utility);
+static const olm::Utility * from_c(OlmUtility const * utility) {
+    return reinterpret_cast<const olm::Utility *>(utility);
 }
 
 static std::uint8_t * from_c(void * bytes) {
@@ -73,22 +73,22 @@ static std::uint8_t const * from_c(void const * bytes) {
 std::size_t b64_output_length(
     size_t raw_length
 ) {
-    return olmKit::encode_base64_length(raw_length);
+    return olm::encode_base64_length(raw_length);
 }
 
 std::uint8_t * b64_output_pos(
     std::uint8_t * output,
     size_t raw_length
 ) {
-    return output + olmKit::encode_base64_length(raw_length) - raw_length;
+    return output + olm::encode_base64_length(raw_length) - raw_length;
 }
 
 std::size_t b64_output(
     std::uint8_t * output, size_t raw_length
 ) {
-    std::size_t base64_length = olmKit::encode_base64_length(raw_length);
+    std::size_t base64_length = olm::encode_base64_length(raw_length);
     std::uint8_t * raw_output = output + base64_length - raw_length;
-    olmKit::encode_base64(raw_output, raw_length, output);
+    olm::encode_base64(raw_output, raw_length, output);
     return base64_length;
 }
 
@@ -96,12 +96,12 @@ std::size_t b64_input(
     std::uint8_t * input, size_t b64_length,
     OlmErrorCode & last_error
 ) {
-    std::size_t raw_length = olmKit::decode_base64_length(b64_length);
+    std::size_t raw_length = olm::decode_base64_length(b64_length);
     if (raw_length == std::size_t(-1)) {
         last_error = OlmErrorCode::OLM_INVALID_BASE64;
         return std::size_t(-1);
     }
-    olmKit::decode_base64(input, b64_length, input);
+    olm::decode_base64(input, b64_length, input);
     return raw_length;
 }
 
@@ -161,39 +161,39 @@ enum OlmErrorCode olm_utility_last_error_code(
 }
 
 size_t olm_account_size(void) {
-    return sizeof(olmKit::Account);
+    return sizeof(olm::Account);
 }
 
 
 size_t olm_session_size(void) {
-    return sizeof(olmKit::Session);
+    return sizeof(olm::Session);
 }
 
 size_t olm_utility_size(void) {
-    return sizeof(olmKit::Utility);
+    return sizeof(olm::Utility);
 }
 
 OlmAccount * olm_account(
     void * memory
 ) {
-    olmKit::unset(memory, sizeof(olmKit::Account));
-    return to_c(new(memory) olmKit::Account());
+    olm::unset(memory, sizeof(olm::Account));
+    return to_c(new(memory) olm::Account());
 }
 
 
 OlmSession * olm_session(
     void * memory
 ) {
-    olmKit::unset(memory, sizeof(olmKit::Session));
-    return to_c(new(memory) olmKit::Session());
+    olm::unset(memory, sizeof(olm::Session));
+    return to_c(new(memory) olm::Session());
 }
 
 
 OlmUtility * olm_utility(
     void * memory
 ) {
-    olmKit::unset(memory, sizeof(olmKit::Utility));
-    return to_c(new(memory) olmKit::Utility());
+    olm::unset(memory, sizeof(olm::Utility));
+    return to_c(new(memory) olm::Utility());
 }
 
 
@@ -201,10 +201,10 @@ size_t olm_clear_account(
     OlmAccount * account
 ) {
     /* Clear the memory backing the account  */
-    olmKit::unset(account, sizeof(olmKit::Account));
+    olm::unset(account, sizeof(olm::Account));
     /* Initialise a fresh account object in case someone tries to use it */
-    new(account) olmKit::Account();
-    return sizeof(olmKit::Account);
+    new(account) olm::Account();
+    return sizeof(olm::Account);
 }
 
 
@@ -212,10 +212,10 @@ size_t olm_clear_session(
     OlmSession * session
 ) {
     /* Clear the memory backing the session */
-    olmKit::unset(session, sizeof(olmKit::Session));
+    olm::unset(session, sizeof(olm::Session));
     /* Initialise a fresh session object in case someone tries to use it */
-    new(session) olmKit::Session();
-    return sizeof(olmKit::Session);
+    new(session) olm::Session();
+    return sizeof(olm::Session);
 }
 
 
@@ -223,10 +223,10 @@ size_t olm_clear_utility(
     OlmUtility * utility
 ) {
     /* Clear the memory backing the session */
-    olmKit::unset(utility, sizeof(olmKit::Utility));
+    olm::unset(utility, sizeof(olm::Utility));
     /* Initialise a fresh session object in case someone tries to use it */
-    new(utility) olmKit::Utility();
-    return sizeof(olmKit::Utility);
+    new(utility) olm::Utility();
+    return sizeof(olm::Utility);
 }
 
 
@@ -249,7 +249,7 @@ size_t olm_pickle_account(
     void const * key, size_t key_length,
     void * pickled, size_t pickled_length
 ) {
-    olmKit::Account & object = *from_c(account);
+    olm::Account & object = *from_c(account);
     std::size_t raw_length = pickle_length(object);
     if (pickled_length < _olm_enc_output_length(raw_length)) {
         object.last_error = OlmErrorCode::OLM_OUTPUT_BUFFER_TOO_SMALL;
@@ -265,7 +265,7 @@ size_t olm_pickle_session(
     void const * key, size_t key_length,
     void * pickled, size_t pickled_length
 ) {
-    olmKit::Session & object = *from_c(session);
+    olm::Session & object = *from_c(session);
     std::size_t raw_length = pickle_length(object);
     if (pickled_length < _olm_enc_output_length(raw_length)) {
         object.last_error = OlmErrorCode::OLM_OUTPUT_BUFFER_TOO_SMALL;
@@ -281,7 +281,7 @@ size_t olm_unpickle_account(
     void const * key, size_t key_length,
     void * pickled, size_t pickled_length
 ) {
-    olmKit::Account & object = *from_c(account);
+    olm::Account & object = *from_c(account);
     std::uint8_t * input = from_c(pickled);
     std::size_t raw_length = _olm_enc_input(
         from_c(key), key_length, input, pickled_length, &object.last_error
@@ -316,7 +316,7 @@ size_t olm_unpickle_session(
     void const * key, size_t key_length,
     void * pickled, size_t pickled_length
 ) {
-    olmKit::Session & object = *from_c(session);
+    olm::Session & object = *from_c(session);
     std::uint8_t * input = from_c(pickled);
     std::size_t raw_length = _olm_enc_input(
         from_c(key), key_length, input, pickled_length, &object.last_error
@@ -358,7 +358,7 @@ size_t olm_create_account(
     void * random, size_t random_length
 ) {
     size_t result = from_c(account)->new_account(from_c(random), random_length);
-    olmKit::unset(random, random_length);
+    olm::unset(random, random_length);
     return result;
 }
 
@@ -454,7 +454,7 @@ size_t olm_account_generate_one_time_keys(
         number_of_keys,
         from_c(random), random_length
     );
-    olmKit::unset(random, random_length);
+    olm::unset(random, random_length);
     return result;
 }
 
@@ -473,7 +473,7 @@ size_t olm_account_generate_fallback_key(
     size_t result = from_c(account)->generate_fallback_key(
         from_c(random), random_length
     );
-    olmKit::unset(random, random_length);
+    olm::unset(random, random_length);
     return result;
 }
 
@@ -538,8 +538,8 @@ size_t olm_create_outbound_session(
     std::size_t id_key_length = their_identity_key_length;
     std::size_t ot_key_length = their_one_time_key_length;
 
-    if (olmKit::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH
-            || olmKit::decode_base64_length(ot_key_length) != CURVE25519_KEY_LENGTH
+    if (olm::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH
+            || olm::decode_base64_length(ot_key_length) != CURVE25519_KEY_LENGTH
     ) {
         from_c(session)->last_error = OlmErrorCode::OLM_INVALID_BASE64;
         return std::size_t(-1);
@@ -547,14 +547,14 @@ size_t olm_create_outbound_session(
     _olm_curve25519_public_key identity_key;
     _olm_curve25519_public_key one_time_key;
 
-    olmKit::decode_base64(id_key, id_key_length, identity_key.public_key);
-    olmKit::decode_base64(ot_key, ot_key_length, one_time_key.public_key);
+    olm::decode_base64(id_key, id_key_length, identity_key.public_key);
+    olm::decode_base64(ot_key, ot_key_length, one_time_key.public_key);
 
     size_t result = from_c(session)->new_outbound_session(
         *from_c(account), identity_key, one_time_key,
         from_c(random), random_length
     );
-    olmKit::unset(random, random_length);
+    olm::unset(random, random_length);
     return result;
 }
 
@@ -585,12 +585,12 @@ size_t olm_create_inbound_session_from(
     std::uint8_t const * id_key = from_c(their_identity_key);
     std::size_t id_key_length = their_identity_key_length;
 
-    if (olmKit::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH) {
+    if (olm::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH) {
         from_c(session)->last_error = OlmErrorCode::OLM_INVALID_BASE64;
         return std::size_t(-1);
     }
     _olm_curve25519_public_key identity_key;
-    olmKit::decode_base64(id_key, id_key_length, identity_key.public_key);
+    olm::decode_base64(id_key, id_key_length, identity_key.public_key);
 
     std::size_t raw_length = b64_input(
         from_c(one_time_key_message), message_length, from_c(session)->last_error
@@ -668,12 +668,12 @@ size_t olm_matches_inbound_session_from(
     std::uint8_t const * id_key = from_c(their_identity_key);
     std::size_t id_key_length = their_identity_key_length;
 
-    if (olmKit::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH) {
+    if (olm::decode_base64_length(id_key_length) != CURVE25519_KEY_LENGTH) {
         from_c(session)->last_error = OlmErrorCode::OLM_INVALID_BASE64;
         return std::size_t(-1);
     }
     _olm_curve25519_public_key identity_key;
-    olmKit::decode_base64(id_key, id_key_length, identity_key.public_key);
+    olm::decode_base64(id_key, id_key_length, identity_key.public_key);
 
     std::size_t raw_length = b64_input(
         from_c(one_time_key_message), message_length, from_c(session)->last_error
@@ -745,7 +745,7 @@ size_t olm_encrypt(
         from_c(random), random_length,
         b64_output_pos(from_c(message), raw_length), raw_length
     );
-    olmKit::unset(random, random_length);
+    olm::unset(random, random_length);
     if (result == std::size_t(-1)) {
         return result;
     }
@@ -765,7 +765,7 @@ size_t olm_decrypt_max_plaintext_length(
         return std::size_t(-1);
     }
     return from_c(session)->decrypt_max_plaintext_length(
-        olmKit::MessageType(message_type), from_c(message), raw_length
+        olm::MessageType(message_type), from_c(message), raw_length
     );
 }
 
@@ -783,7 +783,7 @@ size_t olm_decrypt(
         return std::size_t(-1);
     }
     return from_c(session)->decrypt(
-        olmKit::MessageType(message_type), from_c(message), raw_length,
+        olm::MessageType(message_type), from_c(message), raw_length,
         from_c(plaintext), max_plaintext_length
     );
 }
@@ -824,12 +824,12 @@ size_t olm_ed25519_verify(
     void const * message, size_t message_length,
     void * signature, size_t signature_length
 ) {
-    if (olmKit::decode_base64_length(key_length) != CURVE25519_KEY_LENGTH) {
+    if (olm::decode_base64_length(key_length) != CURVE25519_KEY_LENGTH) {
         from_c(utility)->last_error = OlmErrorCode::OLM_INVALID_BASE64;
         return std::size_t(-1);
     }
     _olm_ed25519_public_key verify_key;
-    olmKit::decode_base64(from_c(key), key_length, verify_key.public_key);
+    olm::decode_base64(from_c(key), key_length, verify_key.public_key);
     std::size_t raw_signature_length = b64_input(
         from_c(signature), signature_length, from_c(utility)->last_error
     );

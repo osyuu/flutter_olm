@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-#include "olmKit/inbound_group_session.h"
+#include "olm/inbound_group_session.h"
 
 #include <string.h>
 
-#include "olmKit/base64.h"
-#include "olmKit/cipher.h"
-#include "olmKit/crypto.h"
-#include "olmKit/error.h"
-#include "olmKit/megolm.h"
-#include "olmKit/memory.h"
-#include "olmKit/message.h"
-#include "olmKit/pickle.h"
-#include "olmKit/pickle_encoding.h"
+#include "olm/base64.h"
+#include "olm/cipher.h"
+#include "olm/crypto.h"
+#include "olm/error.h"
+#include "olm/megolm.h"
+#include "olm/memory.h"
+#include "olm/message.h"
+#include "olm/pickle.h"
+#include "olm/pickle_encoding.h"
 
 
 #define OLM_PROTOCOL_VERSION     3
